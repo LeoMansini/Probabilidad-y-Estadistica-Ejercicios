@@ -1,0 +1,184 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r include=FALSE}
+#Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64", sep=.Platform$path.sep))
+```
+
+---
+output: pdf_document
+---
+
+# Ejercicio: TCL
+
+### Leo Mansini 318/19
+
+### Clase 17 - 11 de junio
+
+<br/>
+
+1. Calcular $E(\hat p_{n})$ y $V(\hat p_{n})$
+
+$\hat p_{n}$ = $\frac{1}{n}\sum_{i = 1}^{n}X_{i}$ siendo $X_{i}$ un experimento de Bernoulli de probababilidad:
+
+$P(A) = 30/36 = 5/6 = 0.833$
+
+$P(B) = 15/36 = 0.4167$
+
+$P(C) = 1/6 = 0.167$
+
+$E(\hat p_{n})$ es una esperanza de una suma de variables aleatorias, por lo que es igual a la suma de las esperanzas de esas variables.
+$X_{i}$ son i.i.d. para todo $i$ entre $1$ y $n$, entonces todas sus esperanzas son iguales:
+
+$$E(\hat p_{n}) = E\left(\frac{1}{n}\sum_{i = 1}^{n}X_{i}\right) = \frac{1}{n}\sum_{i=1}^{n}E(X_{i}) = \frac{1}{n} n E(X_{1}) =E(X_{1})$$
+
+Y la esperanza de un experimento de Bernoulli de probabilidad $p$ es igual a esa probabilidad.
+
+Para $P(A)$ $E(\hat p_{n}) = 5/6 \approx 0.833$
+
+Para $P(B)$ $E(\hat p_{n}) = 15/36 \approx 0.4167$
+
+Para $P(C)$ $E(\hat p_{n}) = 1/6 \approx 0.167$
+
+Análogamente busco la varianza.
+
+$$V(\hat p_{n}) = V\left(\frac{1}{n}\sum_{i = 1}^{n}X_{i}\right) = \frac{1}{n^2}\sum_{i=1}^{n}V(X_{i}) = \frac{1}{n^2} n V(X_{1}) = \frac{V(X_{1})}{n}$$
+Y la varianza de $X_{1}$ es $p(1-p)$
+
+Para $P(A)$ $V(\hat p_{n}) = 5/36/1000 \approx 0.000139$
+
+Para $P(B)$ $V(\hat p_{n}) = 55/432/1000 \approx 0.000127$
+
+Para $P(C)$ $V(\hat p_{n}) = 5/36/1000 \approx 0.000139$
+
+<br/>
+
+2. Estimar $E(\hat p_{n})$ y $V(\hat p_{n})$.
+
+Puedo estimar la esperanza y la varianza usando los muestreos en pa.txt, pb.txt, y pc.txt.
+
+Para estimar la esperanza, puedo hacer un promedio de las mediciones, es decir:
+
+$$E(\tilde p_{n}) = \frac {\sum \hat p_{n}}{n}$$
+
+```{r echo=FALSE}
+pa <- scan(file = "pa.txt", what = double())
+pb <- scan(file = "pb.txt", what = double())
+pc <- scan(file = "pc.txt", what = double())
+```
+Así,
+
+Para pa.txt $E(\tilde p_{n}) =$
+```{r echo=FALSE}
+mean(pa)
+```
+
+
+Para pb.txt $E(\tilde p_{n}) =$
+```{r echo=FALSE}
+mean(pb)
+```
+
+
+Para pc.txt $E(\tilde p_{n}) =$
+```{r echo=FALSE}
+mean(pc)
+```
+
+Las tres estimaciones son buenas, distan en menos de $0.01$ del valor real.
+
+Para estimar la varianza uso su formula dependiente de la esperanza, y la aplico con la esperanza estimada:
+
+$$V(\tilde p_{n}) = E(\tilde p_{n}^2) - E(\tilde p_{n})^2$$
+```{r echo=FALSE}
+eva <- mean(pa^2) - mean(pa)^2
+evb <- mean(pb^2) - mean(pb)^2
+evc <- mean(pc^2) - mean(pc)^2
+```
+
+Entonces las varianzas estimadas para cada caso son:
+
+Para pa.txt $V(\tilde p_{n}) =$
+```{r echo=FALSE}
+eva
+```
+
+
+Para pb.txt $V(\tilde p_{n}) =$
+```{r echo=FALSE}
+evb
+```
+
+
+Para pc.txt $V(\tilde p_{n}) =$
+```{r echo=FALSE}
+evc
+```
+
+En este caso distan en un ~33%. Puede significar que la estimación de la varianza no converge a la real tan rapido como la esperanza, o que no son suficientes las muestras para aproximar.
+
+<br/>
+
+3. Hago histogramas con las mediciones en pa.txt, pb.txt, pc.txt.
+
+```{r echo=FALSE}
+ea <- 5/6
+eb <- 15/36
+ec <- 1/6
+va <- 5/36/1000
+vb <- 55/432/1000
+vc <- 5/36/1000
+
+hist(pa)
+abline(v = mean(pa), col = "red")
+abline(v = ea, col = "blue")
+hist(pb)
+abline(v = mean(pb), col = "red")
+abline(v = eb, col = "blue")
+hist(pc)
+abline(v = mean(pc), col = "red")
+abline(v = ec, col = "blue")
+```
+
+Se ve que el grafico tiene máximo cerca a la esperanza, estan marcadas las esperanzas reales en azul y las estimadas en rojo.
+
+<br/>
+
+5. Agrego la densidad normal que aproxima a $\hat p_{n}$ sobre los histogramas hechos.
+Esta densidad es la de una variable $Y$ de distribución normal de parametros $Y \sim \mathcal{N}(E(\hat p_{n}), \sqrt{V(\hat p_{n})})$.
+
+Es decir, la curva:
+$$f(\hat p_{n}) = \frac{1}{2\pi\sqrt{V(\hat p_{n})}}\exp\left(-\frac{1}{2} \left(\frac{\hat p_{n}-E(\hat p_{n})}{\sqrt{V(\hat p_{n})}}\right)^2\right)$$
+
+```{r echo=FALSE}
+hist(pa, freq = FALSE)
+
+x <- seq(min(pa), max(pa), length = 1000)
+curve(expr = dnorm(x, mean = ea, sd = sqrt(va)), add = TRUE, type="l", lty=2)
+abline(v = mean(pa), col = "red")
+abline(v = 5/6, col = "blue")
+
+hist(pb, freq = FALSE)
+
+x <- seq(min(pb), max(pb), length = 1000)
+curve(expr = dnorm(x, mean = eb, sd = sqrt(vb)), add = TRUE, type="l", lty=2)
+abline(v = mean(pb), col = "red")
+abline(v = 15/36, col = "blue")
+
+hist(pc, freq = FALSE)
+
+x <- seq(min(pc), max(pc), length = 1000)
+curve(expr = dnorm(x, mean = ec, sd = sqrt(vc)), add = TRUE, type="l", lty=2)
+abline(v = mean(pc), col = "red")
+abline(v = 1/6, col = "blue")
+
+```
+
+En este caso, los gráficos estan normalizados, ya que la aproximación normal es una densidad.
+
+Vemos que las curvas de densidad normal aproximan bien los histogramas de $P(A)$ y $P(B)$. En el caso de $P(C)$ la aproximación es menos acertada.
+
+A medida que se aumenten la cantidad de muestras, el grafico tenderá a ser mas parecido a la curva de densidad normal.

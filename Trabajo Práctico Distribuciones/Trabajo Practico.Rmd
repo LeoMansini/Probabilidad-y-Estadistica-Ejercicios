@@ -1,0 +1,347 @@
+---
+title: "Trabajo Practico Ley de los Grandes Números y Teorema Central del Límite"
+body{font-size: 30pt;}
+output: html_document
+---
+
+### Leo Mansini (318/19), Andres Mauro (39/17)
+
+<br/>
+
+<font size="4">
+
+Ejercicio A.
+
+$$X \sim U(0, 1)$$
+
+```{r echo=FALSE, fig.align='center'}
+library(latex2exp)
+set.seed(31819)
+muestra_uniforme <- runif(1000, min = 0, max = 1)
+
+hist(muestra_uniforme, prob = TRUE, main = TeX("Histograma de realizaciones de $X$"))
+```
+
+El histograma se asmeja al gráfico de una densidad uniforme entre $0$ y $1$.
+
+\newpage
+Ejercicio B.
+
+Considero la variable aleatoria $$\overline{X}_2 = \frac {X_1 + X_2}{2}, \quad X_1, X_2 \sim U(0, 1)$$
+
+```{r echo=FALSE, fig.align='center'}
+set.seed(31819)
+promedio_de_muestras <- function(n){
+  promedio <- seq(1:1000)
+  for(i in 1:1000){
+    n_uniformes <- runif(n, min = 0, max = 1)
+    promedio[i] <- mean(n_uniformes)
+  }
+  promedio
+}
+
+promedio_de_2 <- promedio_de_muestras(2)
+hist(promedio_de_2, prob = TRUE, main = TeX("Histograma de realizaciones de $\\bar{X_2}$"))
+```
+
+El histograma se parece a una densidad normal centrada en el $0.5$.
+
+\newpage
+
+Ejercicio C.
+
+Defino $$\overline{X}_5 = \frac{1}{5}\sum_{i = 1}^{5}X_i, \quad X_i \sim U(0, 1)$$ 
+
+```{r echo=FALSE, fig.align='center'}
+set.seed(31819)
+promedio_de_5 <- promedio_de_muestras(5)
+
+hist(promedio_de_5, prob = TRUE, main = TeX("Histograma de realizaciones de $\\bar{X_5}$"))
+
+```
+
+Este histograma es similar al anterior pero muestra una dispersión menor en los datos. También parece una normal centrada en $0.5$, pero con una varianza menor que en el ejercicio b.
+
+\newpage
+Ejercicio D.
+
+$$\overline{X}_{30} = \frac{1}{30}\sum_{i = 1}^{30}X_i, \quad X_i \sim U(0, 1)$$
+
+```{r echo=FALSE, fig.align='center', fig.width= 8}
+set.seed(31819)
+promedio_de_30 <- promedio_de_muestras(30)
+
+par(mfrow = c(1, 2))
+hist(promedio_de_30, prob = TRUE, breaks = seq(0, 1, 0.1), main = TeX("Histograma de realizaciones de $\\bar{X_{30}}$"))
+hist(promedio_de_30, prob = TRUE, main = TeX("Histograma de realizaciones de $\\bar{X_{30}}$"))
+```
+
+En el primer histograma se graficaron las realizaciones de la variable uniforme en la misma escala que los histogramas anteriores, lo cual muestra que la concentración es mucho mayor. En el segundo gráfico se grafica de $0.3$ a $0.7$, donde están la gran mayoria de los datos.
+
+\newpage
+Ejercicio E.
+
+$$\overline{X}_{500} = \frac{1}{500}\sum_{i = 1}^{500}X_i, \quad X_i \sim U(0, 1)$$
+
+```{r echo=FALSE, fig.align='center'}
+set.seed(31819)
+promedio_de_500 <- promedio_de_muestras(500)
+
+par(mfrow = c(2, 2))
+hist(promedio_de_500, prob = TRUE, breaks = seq(0, 1, 0.1), ylim = c(0, 5), main = TeX("Histograma de realizaciones de $\\bar{X_{500}}$"))
+hist(promedio_de_30, prob = TRUE, breaks = seq(0, 1, 0.1), ylim = c(0, 5), main = TeX("Histograma de realizaciones de $\\bar{X_{30}}$"))
+hist(promedio_de_5, prob = TRUE, breaks = seq(0, 1, 0.1), ylim = c(0, 5), main = TeX("Histograma de realizaciones de $\\bar{X_{5}}$"))
+hist(promedio_de_2, prob = TRUE, breaks = seq(0, 1, 0.1), ylim = c(0, 5), main = TeX("Histograma de realizaciones de $\\bar{X_{2}}$"))
+```
+
+Los histogramas están todos en la misma escala.
+
+Si se aumenta el tamaño de la muestra los valores estan aún más concentrados.
+
+
+
+\newpage
+Ejercicio F.
+
+$$\overline{X}_{1200} = \frac{1}{1200} \sum_{i = 1}^{1200}X_i, \quad X_i \sim U(0, 1)$$
+
+```{r echo=FALSE, fig.align='center'}
+set.seed(31819)
+promedio_de_1200 <- promedio_de_muestras(1200)
+
+boxplot(promedio_de_1200, promedio_de_500, promedio_de_30, promedio_de_5, promedio_de_2, names = c(TeX("$\\bar{X_{1200}}$"), TeX("$\\bar{X_{500}}$"), TeX("$\\bar{X_{30}}$"), TeX("$\\bar{X_{5}}$"), TeX("$\\bar{X_{2}}$")))
+```
+
+En orden, estan los boxplot del promedio de $1200$ muestras, $500$ muestras, $30$ muestras, $5$ muestras y $2$ muestras. Se ve claramente como a medida que aumenta la cantidad de muestras, la dispersión de datos decrece. Los datos se encuentran cada vez más acumulados en $0.5$.
+
+Las medias muestrales de los promedios de $2$, $5$, $30$, $500$, y $1200$ datos, son:
+
+```{r echo=FALSE, fig.align='center'}
+var_2 <- var(promedio_de_2)
+media_2 <- mean(promedio_de_2)
+var_5 <- var(promedio_de_5)
+media_5 <- mean(promedio_de_5)
+var_30 <- var(promedio_de_30)
+media_30 <- mean(promedio_de_30)
+var_500 <- var(promedio_de_500)
+media_500 <- mean(promedio_de_500)
+var_1200 <- var(promedio_de_1200)
+media_1200 <- mean(promedio_de_1200)
+
+media_2
+media_5
+media_30
+media_500
+media_1200
+```
+
+<br/>
+Las varianzas muestrales de los promedios de $2$, $5$, $30$, $500$, y $1200$ datos, son:
+
+```{r echo=FALSE, fig.align='center'}
+print(var_2)
+print(var_5)
+print(var_30)
+print(var_500)
+print(var_1200)
+```
+
+
+Los valores teóricos a los que la media muestral debe tender a medida que aumenta $n$ son la esperanza de una variable aleatoria con distibucion uniforme entre $0$ y $1$, es decir, $0.5$. La varianza muestral debe parecerse a la varianza de la variable aleatoria dividido $n$, $\frac{1}{12n}$. Por eso es que a medida que aumenta $n$, la varianza muestral tiende a $0$.
+
+
+```{r echo=FALSE, fig.align='center'}
+par(mfrow = c(2, 2))
+qqplot(promedio_de_2, rnorm(1000, mean = media_2, sd = sqrt(var_2)),  main = TeX("qqplot de $\\bar{X_{2}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+qqplot(promedio_de_5, rnorm(1000, mean = media_5, sd = sqrt(var_5)),  main = TeX("qqplot de $\\bar{X_{5}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+qqplot(promedio_de_30, rnorm(1000, mean = media_30, sd = sqrt(var_30)),  main = TeX("qqplot de $\\bar{X_{30}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+qqplot(promedio_de_500, rnorm(1000, mean = media_500, sd = sqrt(var_500)),  main = TeX("qqplot de $\\bar{X_{500}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+par(mfrow = c(1, 1))
+qqplot(promedio_de_1200, rnorm(1000, mean = media_1200, sd = sqrt(var_1200)),  main = TeX("qqplot de $\\bar{X_{1200}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+```
+
+Aquí se realizaron qqplot de las variables de promedio de uniformes, y de variables normales con media y varianza igual a la media y varianza muestral de los promedios.
+
+También se superpuso a los qqplot una recta identidad en rojo.
+
+Cuando el qqplot de un conjunto de datos y otro se asemeja a una recta identidad, esto significa que sus distribuciones son similares.
+
+El hecho de que se parezcan a una distribución normal se condice con el Teorema Central de Límite ya que las variables graficadas son promedios, y estas tienden en probabilidad a una variable aleatoria con distribución normal de media $E(X)$ y varianza $\frac{V(X)}{n}$, a medida que aumenta $n$.
+
+Este Teorema es aplicable porque tanto la esperanza como la varianza de una variable aleatoria uniforme son finitas.
+
+\newpage
+Ejercicio G.
+
+```{r echo=FALSE, fig.align='center', fig.height=8}
+
+par(mfrow = c(3, 2))
+estandar_2 <- (promedio_de_2 - 0.5)/sqrt(1/(12*2))
+estandar_5 <- (promedio_de_5 - 0.5)/sqrt(1/(12*5))
+estandar_30 <- (promedio_de_30 - 0.5)/sqrt(1/(12*30))
+estandar_500 <- (promedio_de_500 - 0.5)/sqrt(1/(12*500))
+estandar_1200 <- (promedio_de_1200 - 0.5)/sqrt(1/(12*1200))
+
+hist(estandar_2, prob = TRUE, main = TeX("$\\bar{X_{2}}$  Estandarizada"))
+curve(expr = dnorm(x, mean = 0, sd = 1), add = TRUE)
+hist(estandar_5, prob = TRUE, main = TeX("$\\bar{X_{5}}$ Estandarizada"))
+curve(expr = dnorm(x, mean = 0, sd = 1), add = TRUE)
+hist(estandar_30, prob = TRUE, main = TeX("$\\bar{X_{30}}$ Estandarizada"))
+curve(expr = dnorm(x, mean = 0, sd = 1), add = TRUE)
+hist(estandar_500, prob = TRUE, main = TeX("$\\bar{X_{500}}$ Estandarizada"))
+curve(expr = dnorm(x, mean = 0, sd = 1), add = TRUE)
+hist(estandar_1200, prob = TRUE, main = TeX("$\\bar{X_{1200}}$ Estandarizada"))
+curve(expr = dnorm(x, mean = 0, sd = 1), add = TRUE)
+```
+
+
+```{r echo=FALSE, fig.align='center'}
+set.seed(31819)
+boxplot(estandar_2, estandar_5, estandar_30, estandar_500, estandar_1200, rnorm(1000, mean = 0, sd = 1), names = c(TeX("$\\bar{X_{2E}}$"), TeX("$\\bar{X_{5E}}$"), TeX("$\\bar{X_{30E}}$"), TeX("$\\bar{X_{500E}}$"), TeX("$\\bar{X_{1200E}}$"), TeX("$Z \\sim N(0, 1)$")))
+```
+
+Podemos decir que todos los conjuntos de datos se pueden estandarizar y asi parecen una normal estándar. En los histogramas se puede ver con la curva de densidad normal sobre las barras, y en los boxplot esta graficado un conjunto de $1000$ variables con distribución normal para comparar.
+
+\newpage
+Ejercicio H.
+
+$$X \sim C(0, 1) \text{, siendo } f_X(x) = \frac{1}{\pi (1+x^2)}$$
+
+```{r echo=FALSE, fig.align='center'}
+set.seed(31819)
+x <- rcauchy(1000)
+hist(x, prob = TRUE, main = TeX("$X$"))
+```
+
+No se parece a ninguna otra densidad que hayamos estudiado.
+
+\newpage
+Defino:
+
+$$\overline{X_i} = \frac{1}{i} \sum_{j = 1}^{i} X_j, \quad X_j \sim C(0, 1)    \forall j$$
+
+```{r echo=FALSE, fig.align='center', fig.height=8, fig.width=7}
+set.seed(31819)
+promedio_cauchy <- function(n){
+  promedio <- seq(1:1000)
+  for(i in 1:1000){
+    n_cauchy <- rcauchy(n)
+    promedio[i] <- mean(n_cauchy)
+  }
+  promedio
+}
+
+cauchy_2 <- promedio_cauchy(2)
+cauchy_5 <- promedio_cauchy(5)
+cauchy_30 <- promedio_cauchy(30)
+cauchy_500 <- promedio_cauchy(500)
+cauchy_1200 <- promedio_cauchy(1200)
+
+par(mfrow = c(3, 2))
+hist(cauchy_2, prob = TRUE, main = TeX("$\\bar{X_{2}}$"))
+hist(cauchy_5, prob = TRUE, main = TeX("$\\bar{X_{5}}$"))
+hist(cauchy_30, prob = TRUE, main = TeX("$\\bar{X_{30}}$"))
+hist(cauchy_500, prob = TRUE, main = TeX("$\\bar{X_{500}}$"))
+hist(cauchy_1200, prob = TRUE, main = TeX("$\\bar{X_{1200}}$"))
+```
+
+\newpage
+Aquí estan graficados los histogramas de los conjuntos de datos de promedios de $2$, $5$, $30$, $500$, y $1200$ variables con distribución de cauchy.
+Ninguno de estos histogramas se parece a una normal. Aumentando el tamaño de la muestra no parece haber cambios en la dispersión.
+
+```{r echo=FALSE, fig.align='center', fig.height=4}
+
+cauchy_5so <- sort(cauchy_5)
+cauchy_5so[1] = 0
+boxplot(cauchy_2, cauchy_5, cauchy_30, cauchy_500, cauchy_1200, names = c(TeX("$\\bar{X_{2}}$"), TeX("$\\bar{X_{5}}$"), TeX("$\\bar{X_{30}}$"), TeX("$\\bar{X_{500}}$"), TeX("$\\bar{X_{1200}}$")))
+boxplot(cauchy_2, cauchy_5so, cauchy_30, cauchy_500, cauchy_1200, names = c(TeX("$\\bar{X_{2}}$"), TeX("$\\bar{X_{5}}(so)$"), TeX("$\\bar{X_{30}}$"), TeX("$\\bar{X_{500}}$"), TeX("$\\bar{X_{1200}}$")))
+```
+
+Los boxplots están graficados $2$ veces por la presencia de un outlier en el conjunto de datos cauchy5. En el segundo gráfico se removió ese outlier, cambiando $\overline{X_5}$ por $\overline{X_5}(so)$ aunque aún así no se pudo comparar los conjuntos de datos, y ninguno se parece al boxplot de una normal.
+```{r echo=FALSE, fig.align='center'}
+cmed_2 <- mean(cauchy_2)
+cvar_2 <- var(cauchy_2)
+cmed_5 <- mean(cauchy_5)
+cvar_5 <- var(cauchy_5)
+cmed_30 <- mean(cauchy_30)
+cvar_30 <- var(cauchy_30)
+cmed_500 <- mean(cauchy_500)
+cvar_500 <- var(cauchy_500)
+cmed_1200 <- mean(cauchy_1200)
+cvar_1200 <- var(cauchy_1200)
+```
+
+Las medias muestrales de los promedios de $2$, $5$, $30$, $500$, y $1200$ realizaciones de una variable con distribución Cauchy, son:
+
+```{r echo=FALSE}
+mean(cauchy_2)
+mean(cauchy_5)
+mean(cauchy_30)
+mean(cauchy_500)
+mean(cauchy_1200)
+
+```
+
+Las varianzas muestrales de los promedios de $2$, $5$, $30$, $500$, y $1200$ realizaciones de una variable con distribución Cauchy, son:
+
+```{r echo=FALSE}
+
+var(cauchy_2)
+var(cauchy_5)
+var(cauchy_30)
+var(cauchy_500)
+var(cauchy_1200)
+```
+
+No es posible dar valores teóricos a los que deberían tender las medias o varianzas muestrales dado que la distribución Cauchy no tiene una varianza o una esperanza finita.
+
+```{r echo = FALSE, fig.align='center'}
+
+par(mfrow = c(2, 2))
+
+qqplot(cauchy_2, rnorm(1000, mean = cmed_2, sd = sqrt(cvar_2)),  main = TeX("qqplot de $\\bar{X_{2}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+qqplot(cauchy_5, rnorm(1000, mean = cmed_5, sd = sqrt(cvar_5)),  main = TeX("qqplot de $\\bar{X_{5}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+qqplot(cauchy_30, rnorm(1000, mean = cmed_30, sd = sqrt(cvar_30)),  main = TeX("qqplot de $\\bar{X_{30}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+qqplot(cauchy_500, rnorm(1000, mean = cmed_500, sd = sqrt(cvar_500)),  main = TeX("qqplot de $\\bar{X_{500}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+
+par(mfrow = c(1, 1))
+qqplot(cauchy_1200, rnorm(1000, mean = cmed_1200, sd = sqrt(cvar_1200)),  main = TeX("qqplot de $\\bar{X_{1200}}$ y una normal."), ylab = "Variable Normal")
+
+abline(a = 0, b = 1, col = "red")
+```
+
+Se realizaron qqplots comparando los conjuntos de datos de promedios de variables de Cauchy y variables normales. Para las variables normales se utilizaron como parametros la media y varianza muestral de los conjuntos de datos.
+
+Aquí se ve que los gráficos no son rectas identidad, por lo que los promedios de variables de Cauchy no siguen una distribución normal.
+
+El Teorema Central del Límite no nos puede decir nada sobre si este resultado es esperado o no, dado que la distribución Cauchy no tiene una esperanza o una varianza teórica finita, una de las condiciones que tiene el Teorema.
+
+Estandarizar el promedio de Cauchy no es posible, dado que necesitamos saber la esperanza y la varianza de una variable Cauchy, y estas no son finitas.
+
+
+</font>
