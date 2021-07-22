@@ -4,9 +4,6 @@ output:
   html_document: default
 ---
 
-```{r include=FALSE}
-#Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64", sep=.Platform$path.sep))
-```
 
 ---
 output: pdf_document
